@@ -16,42 +16,155 @@
 	select version();
 
 
-create table student(
-	id int unsigned not null  auto_increment primary key,
-	name varchar(30),
-	age tinyint unsigned default 0,
-	high decimal(5,2),
-	gender enum("男","女","保密") default "保密",
-	cls_id int unsigned 
-	);
+-- 数据库相关操作
 
-create table class(
-id int unsigned not null auto_increment primary key,
-name varchar(30) 
-);
+    -- 1.创建数据库
+    -- create database 数据库名 charset=utf8;
+    create database python04;
+    create database python04new charset=utf8;
+    
+    -- 2.查看当前使用的数据库
+    select database();
 
-insert into student values(0, "小李",20,"男",2,"2010-01-01");
-insert into student values(default, "小李",20,"男",2,"2010-01-01");
-insert into student values(null, "小李",20,"男",2,"2010-01-01");
+    -- 3.使用数据库
+    -- use 数据库的名字
+    use python04new;
 
-insert into student values(null, "小李",20,2,2,"2010-01-01");
+    -- 4.删除数据库
+    -- drop database 数据库名;
+    drop database python04;
 
-insert into student(name,age) values("能人",23),("貂蝉",25);	
-
-insert into student values(null, "小si",20,"男",2,"2012-01-01"),(default, "小wu",20,"男",2,"2022-01-01");
+   	-- 5.查看创建数据库的语句
+    -- show crate database ....
+    show create database python04;
 
 
-create table stu1(
-id int unsigned primary key not null auto_increment ,
-name varchar(30),
-sex enum("femal","male","bgirl"),
-height decimal(5,2)
-);
+-- 数据表结构的操作
+
+	-- 1.创建表结构
+    -- auto_increment表示自动增长
+    -- not null 表示不能为空
+    -- primary key 表示主键
+    -- default 默认值
+    -- create table 数据表名字 (字段 类型 约束[, 字段 类型 约束]);
 
 
-create table stu2(
-id int unsigned primary key  not null,
+		create table students(
+	        id int unsigned not null auto_increment primary key,
+	        name varchar(30),
+	        age tinyint unsigned default 0,
+	        high decimal(5,2),
+	        gender enum("男", "女", "中性", "保密") default "保密",
+	        cls_id int unsigned
+	    );
 
-)
+		create table classes(
+	        id int unsigned not null auto_increment primary key,
+	        name varchar(30)
+	    );
 
+	-- 2.查看表结构
+	-- desc 数据表的名字;
+	desc student;
+
+	-- 3.查看表的创建语句
+	-- show create table 表名字;
+	show create table students;
+
+	-- 4.修改表结构
+	    -- 1.修改表-添加字段
+	    -- alter table 表名 add 列名 类型;
+	    alter table students add birthday datetime;
+	 
+	    -- 2.1  修改表-修改字段：不重命名版
+	    -- alter table 表名 modify 列名 类型及约束;
+	    alter table students modify birthday date;
+
+	    -- 2.2 修改表-修改字段：重命名版
+	    -- alter table 表名 change 原名 新名 类型及约束;
+	    alter table students change birthday birth date default "2000-01-01";
+
+	    -- 3.修改表-删除字段
+	    -- alter table 表名 drop 列名;
+	    alter table students drop high;
+
+    -- 5.删除表
+    -- drop table 表名;
+    -- drop database 数据库;
+    -- drop table 数据表;
+    drop table xxxxx;
+
+
+-- 数据表数据操作---增删改查(curd)
+
+    -- 1.增加
+	    -- 1.全列插入
+	    -- insert [into] 表名 values(...)
+	    -- 主键字段 可以用 0  null   default 来占位
+
+	    +--------+-------------------------------------+------+-----+------------+----------------+
+	    | Field  | Type                                | Null | Key | Default    | Extra          |
+	    +--------+-------------------------------------+------+-----+------------+----------------+
+	    | id     | int(10) unsigned                    | NO   | PRI | NULL       | auto_increment |
+	    | name   | varchar(30)                         | YES  |     | NULL       |                |
+	    | age    | tinyint(3) unsigned                 | YES  |     | 0          |                |
+	    | gender | enum('男','女','中性','保密')       | YES  |     | 保密       |                |
+	    | cls_id | int(10) unsigned                    | YES  |     | NULL       |                |
+	    | birth  | date                                | YES  |     | 2000-01-01 |                |
+	    +--------+-------------------------------------+------+-----+------------+----------------+
+		    -- 向students表插入 一个学生信息
+		    insert into students values(0, "小李飞刀", 20, "女", 1, "1990-01-01");
+		    insert into students values(null, "小李飞刀", 20, "女", 1, "1990-01-01");
+		    insert into students values(default, "小李飞刀", 20, "女", 1, "1990-01-01");
+
+		    -- 枚举中 的 下标从1 开始 1---“男” 2--->"女"....
+	        insert into students values(default, "小李飞刀", 20, 1, 1, "1990-02-01");	
+
+	    -- 2.部分插入
+        -- insert into 表名(列1,...) values(值1,...)
+        insert into students (name, gender) values ("小乔", 2);
+
+    	-- 3.多行插入
+    	insert into students (name, gender) values ("大乔", 2),("貂蝉", 2);
+        insert into students values(default, "西施", 20, "女", 1, "1990-01-01"), (default, "王昭君", 20, "女", 1, "1990-01-01");
+
+    -- 2.修改
+     -- update 表名 set 列1=值1,列2=值2... where 条件;
+        update students set gender=1; -- 全部都改
+        update students set gender=1 where name="小李飞刀"; -- 只要name是小李飞刀的 全部的修改
+        update students set gender=1 where id=3; -- 只要id为3的 进行修改
+        update students set age=22, gender=1 where id=3; -- 只要id为3的 进行修改
+
+    -- 3.基本查询
+    	-- 1.查询所有列
+        -- select * from 表名;
+        select * from students;
+
+        -- 2.查询指定列
+        -- select 列1,列2,... from 表名;
+        select name,gender from students;
+
+        ---3.定条件查询
+        select * from students where name="小李飞刀"; -- 查询 name为小李飞刀的所有信息
+        select * from students where id>3; -- 查询 name为小李飞刀的所有信息
+
+        -- 4.可以使用as为列或表指定别名
+        -- select 字段[as 别名] , 字段[as 别名] from 数据表 where ....;
+        select name as 姓名,gender as 性别 from students;
+
+        -- 5.字段的顺序
+        select id as 序号, gender as 性别, name as 姓名 from students;
+	
+
+    -- 4.删除
+        -- 1.物理删除
+        -- delete from 表名 where 条件
+        delete from students; -- 整个数据表中的所有数据全部删除
+        delete from students where name="小李飞刀";
+
+        -- 2.逻辑删除  推荐
+        -- 用一个字段来表示 这条信息是否已经不能再使用了
+        -- 给students表添加一个is_delete字段 bit 类型
+        alter table students add is_delete bit default 0;
+        update students set is_delete=1 where id=6;
  

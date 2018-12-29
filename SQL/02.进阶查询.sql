@@ -26,101 +26,102 @@
 	    name varchar(30) not null
 	);
 
-	-- 查询所有字段
+-- 基本查询
+	-- 1.查询所有字段
 	-- select * from 表名
 	select * from students
 	select * from classes
 
-	-- 查询指定字段
+	-- 2.查询指定字段
 	-- select 列1，列2... from 表名
 	select name,age from students;
 
-	-- 使用as为字段起别名
+	-- 3.使用as为字段起别名
 	-- select 字段 [as 别名],字段2 [as 别名]... from 表名;
 	select name as 姓名,age as 年龄 from students;
 
-	-- 使用as为表起别名
+	-- 3.使用as为表起别名
 	-- select 别名.字段,别名.字段... from 表名 as 别名；
 	select students.name,students.age from students；
 	select s.name,s.age from students as s;
 	-- 错误的，select students.name,students.age from students as s 
 
-	-- 消除重复行
+	-- 4.消除重复行
 	-- distinct 字段  针对某一个字段
 	select distinct gender from students;
 
 -- 条件查询
 
-	-- 比较运算符
+	-- 1.比较运算符
 	-- > >= < <= = !=
 	select * from students where age>18;
 	select * from students where age<=18;
 	select name,gender from students where age!=18;
 
-	-- 逻辑运算符
+	-- 2.逻辑运算符
 	-- and or not
-	-- 18到28之间的所有学生
-	select * from students where age>18 and age<28;
+		-- 18到28之间的所有学生
+		select * from students where age>18 and age<28;
 
-	-- 不在  18岁以上的女性
-	-- select * from students where not age>18 and gender=2;
-	select * from students where not (age>18 and gender=2);
+		-- 不在  18岁以上的女性
+		-- select * from students where not age>18 and gender=2;
+		select * from students where not (age>18 and gender=2);
 
-	-- 年龄不是小于18或者等于18的，并且还是女性
-	select * from students where not age<=18 and gender=2;
+		-- 年龄不是小于18或者等于18的，并且还是女性
+		select * from students where not age<=18 and gender=2;
 
 	-- 模糊查询
-	-- like
-	-- % 表示0个或多个
-	-- _ 表示1个
-	-- 查询姓名中以“小”开始的名字
-	select * from students where name like "小%";
+		-- 1.like
+		-- % 表示0个或多个
+		-- _ 表示1个
+			-- 查询姓名中以“小”开始的名字
+			select * from students where name like "小%";
 
-	-- 查询姓名中有"小"的所有名字
-	select * from students where name like "%小%";
+			-- 查询姓名中有"小"的所有名字
+			select * from students where name like "%小%";
 
-	-- 查询是两个字的所有名字
-	select name from students where name like "__";
+			-- 查询是两个字的所有名字
+			select name from students where name like "__";
 
-	-- 查询至少有两个字的名字
-	select name from students where name like "__%";
+			-- 查询至少有两个字的名字
+			select name from students where name like "__%";
 
 
-	-- rlike 正则
-	-- 查询以“周”开始的名字
-	select name from students where name rlike "^周.*";
+		-- 2.rlike 正则
+			-- 查询以“周”开始的名字
+			select name from students where name rlike "^周.*";
 
-	-- 查询以“周”开始，以“伦”结尾的名字
-	select name from students where name rlike "^周.*伦$";
+			-- 查询以“周”开始，以“伦”结尾的名字
+			select name from students where name rlike "^周.*伦$";
 
 
 	-- 范围查询
-	-- in(1,3,8) 表示在一个非连续的范围内
-	-- 查询年龄为18、34的姓名 
-	select name from students where age in (18,34);
+		-- 1.in(1,3,8) 表示在一个非连续的范围内
+		-- 查询年龄为18、34的姓名 
+		select name from students where age in (18,34);
 
-	-- not in(1,3,8)  表示不在一个非连续的范围内
-	-- 查询年龄不在18、34的姓名
-	select name from students where age not in (18,34);
+		-- 2.not in(1,3,8)  表示不在一个非连续的范围内
+		-- 查询年龄不在18、34的姓名
+		select name from students where age not in (18,34);
 
-	-- between ... and ... 表示在一个连续的范围内(包括两端)
-	-- 查询年龄在18至34之间的姓名 
-	select name,age from students where age between 18 and 34;
+		-- 3.between ... and ... 表示在一个连续的范围内(包括两端)
+		-- 查询年龄在18至34之间的姓名 
+		select name,age from students where age between 18 and 34;
 
-	-- not between ... and ... 表示不在一个连续的范围内
-	-- 查询年龄不在18至34之间的姓名
-	select name from students where age not between 18 and 34;
-	-- 错误的 select name from students where age not (between 18 and 34);
+		-- 4.not between ... and ... 表示不在一个连续的范围内
+		-- 查询年龄不在18至34之间的姓名
+		select name from students where age not between 18 and 34;
+		-- 错误的 select name from students where age not (between 18 and 34);
 
 
 	-- 空判断
-	-- is null 判空
-	-- 查询身高为空的信息
-	select * from students where height is null;
+		-- 1.is null 判空
+		-- 查询身高为空的信息
+		select * from students where height is null;
 
-	-- is not null 不为空
-	-- 查询身高不为空的信息
-	select * from students where height is not null;
+		-- 2.is not null 不为空
+		-- 查询身高不为空的信息
+		select * from students where height is not null;
 
 -- 排序
 
@@ -144,73 +145,128 @@
 	select * from students order by age asc,height desc;
 
 -- 聚合函数
-	-- count() 总数
+	-- 1.count() 总数
 	-- 查询有多少男性
 	select count(*) as "男性人数" from students where gender=1;
 
-	-- max(字段)  字段中的最大值
-	-- 查询最大的年龄
-	select max(age) as "最大年龄" from students;
+	-- 2.max(字段)  字段中的最大值
+		-- 查询最大的年龄
+		select max(age) as "最大年龄" from students;
 
-	-- 查询女性中的最高身高
-	select max(height) from students where gender=2;
+		-- 查询女性中的最高身高
+		select max(height) from students where gender=2;
 
-	-- min(字段)  字段中的最小值
+	-- 3.min(字段)  字段中的最小值
 
-	-- sum(字段) 字段求和
+	-- 4.sum(字段) 字段求和
 	-- 计算所有人的年龄总和
 	select sum(age) from students;
 
-	-- avg(字段)  求字段的平均值
+	-- 5.avg(字段)  求字段的平均值
 	-- 计算平均年龄
 	select avg(age) from students;
 	select sum(age)/count(*) from students;  #select 后可跟表达式
 
-	-- round(字段,num)  保留字段几位小数，默认四舍五入，另在实际过程中避免存储上的误差，应避免存小数，可采用倍数成整数的方法
+	-- 5.round(字段,num)  保留字段几位小数，默认四舍五入，另在实际过程中避免存储上的误差，应避免存小数，可采用倍数成整数的方法
 	-- 计算男性的平均年龄，保留2位小数
 	select round(avg(age),2) from students where gender=1;
 
 -- 分组
-	 -- group by 字段 #相当于将原始数据表按照字段分别分组，随后的操作对象是分组后的数据(注意分组后的”主键“)
+	 -- 1.group by 字段 #相当于将原始数据表按照字段分别分组，随后的操作对象是分组后的数据(注意分组后的”主键“)
 	 -- 通常，分组和聚合配合着使用方才有意义
-	 -- 计算每种性别中的人数
-	 select count(*) from students group by gender;
-	 -- 错误的，select name,count(*) from students group by gender;  #对于分组后的4组数据中，每组中的name是有歧义的，会报错
+		 -- 计算每种性别中的人数
+		 select count(*) from students group by gender;
+		 -- 错误的，select name,count(*) from students group by gender;  #对于分组后的4组数据中，每组中的name是有歧义的，会报错
 
+		 -- 计算男性的人数
+		 select count(*) from students where gender=1 group by gender;
 
-	 -- 计算男性的人数
-	 select count(*) from students where gender=1 group by gender;
-
-	 -- group_concat(...) #操作对象是group by后的分组数据
+	 -- 2.group_concat(...) #操作对象是group by后的分组数据
 	 -- 查询同种性别中的姓名
 	 select gender,group_concat(name) from students where gender=1 group by gender;  #select ... from ... where ... group by ...
 	 select gender,group_concat(name,' age: ',age,' ',id) from students group by gender;
 
-	 -- having
+	 -- 3.having
 	 -- having 的操作对象是group by后的”逻辑“数据表，而where 的操作对象是最初的数据表
-	 -- 查询不同性别中平均年龄超过30岁的姓名
-	 select gender,group_concat(name) from students group by gender having avg(age)>30;
+		 -- 查询不同性别中平均年龄超过30岁的姓名
+		 select gender,group_concat(name) from students group by gender having avg(age)>30;
 
-	 -- 查询每种性别中的人数多于2个的信息
-	 select gender,group_concat(name) from students group by gender having count(*)>2;
+		 -- 查询每种性别中的人数多于2个的信息
+		 select gender,group_concat(name) from students group by gender having count(*)>2;
 
 -- 分页
-	-- limit start,count  #start 下标从0开始，而enum()下标从1开始
-	-- limit count
+	-- 1.limit count
 	-- 查询女性中的前5个数据；
 	select * from students where gender=2 limit 5;
 
+	-- 2.limit start,count  #start 下标从0开始，而enum()下标从1开始
 	-- 计算方式 limit （第N页-1)*每页的个数,每页的个数
 	-- 显示女性，且每页显示3个，显示第3页
 	select * from students where gender=2 limit 6,3;
 	--错误的 select * from students where gender=2 limit(3-1)*3,3
 
 -- 连接查询
-	
+	-- 1.inner join ...on 内连接，取交集部分
+	-- select ... from 表A inner join 表B on...
+		-- 查询有对应班级信息的学生及其班级信息
+		select * from students inner join classes on students.cls_id=classes.id;
 
+		-- 按要求显示姓名、班级  显示指定列
+		select students.*,classes.name from students inner join classes on students.cls_id=classes.id;
+		select classes.name,students.id,students.name from students inner join classes on students.cls_id=classes.id;
 
+		-- 为数据表起别名    起别名后，所有的地方都要使用简写
+		select c.name,s.id,s.name from students as s inner join classes as c on s.cls_id=c.id;
 
-	
+		-- 查询有班级信息的学生及其班级信息，并按照班级进行排序
+		select c.name,s.name,s.id from students as s inner join classes as c on s.cls_id=c.id order by s.cls_id;
+
+		-- 查询有班级信息的学生及其班级信息，并按照班级排序、id降序排列
+		select c.name,s.name,s.id from students as s inner join classes as c on s.cls_id=c.id order by s.cls_id,s.id desc;
+
+	-- 2.left join ...on 左连接 以左表为基准，以右表内容向其填充，无匹配项时置为null
+	-- 查询没有班级信息的学生信息
+	select * from students as s left join classes as c on s.cls_id=c.id having c.id is null;
+
+	-- 3.right join ...on 右连接
+	-- 将两数据表调换即成左连接，用left join完成
+
+-- 自关联
+	-- 省级联动  http://demo.lanrenzhijia.com/2014/city0605/
+	-- 将省、市、县三张表中的数据放在同一表中，其中，市的pid是省的aid,县的pid是市的aid
+	-- 一张表通过as别名的方式，可认为其为多张表，可进行表与表之间内连接、左连接等查询
+
+	-- 查询有哪些省
+	select * from areas where pid is null;
+
+	-- 查询出河南省有哪些市
+	select * from areas as province inner join areas as city on province.aid=city.pid having province.atitle="河南省";
+
+	-- 查询出新乡市有哪些县
+	select * from areas as province inner join areas as city on province.aid=city.pid having province.atitle="新乡市";
+
+-- 子查询
+	-- 当查询语句中有未知变量时，需要进一步查询获知该值，这就是子查询
+
+	-- 标量子查询
+	-- 查询最高的男生信息
+	select * from students where height = (select max(height) from students);
+
+	-- 死缓子查询
+	-- 查询有相应班级信息的学生信息
+	select	* from students where cls_id in (select id from classes);
+
+-- 数据库的设计
+	-- 范式
+	-- 1.第一范式：原子性，即列不能再分成其它列
+	-- 2.第二范式：表中必须有主键；其它列必须完全依赖于主键，不能部分依赖主键；
+	-- 3.第三范式：非主键列必须直接完全依赖于主键，不能传递依赖于主键；
+
+	-- ER模型  怎样定义实体及其间的关系
+	-- E-Entry:实体    Relationship:关系
+	-- 1.实体A对实体B为1对1，则在表A或表B中创建一个字段，存储另一表的主键值；
+	-- 2.实体A对实体B为1对多，则在表B中创建一个字段，存储表A的主键值
+	-- 3.实体A对实体B为多对多，则新建一张表C，这个表只有两个字段，分别存储表A与表B的主键值；
 
 
 
