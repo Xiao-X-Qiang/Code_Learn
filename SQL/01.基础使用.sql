@@ -75,6 +75,10 @@
 	    -- 1.修改表-添加字段
 	    -- alter table 表名 add 列名 类型;
 	    alter table students add birthday datetime;
+
+	    -- 1.1 修改表-添加外键
+	    -- alter table 表1 add foreign key (字段) references 表2(字段);
+	    alter table students add foreign key (cls_id) references classes(id);
 	 
 	    -- 2.1  修改表-修改字段：不重命名版
 	    -- alter table 表名 modify 列名 类型及约束;
@@ -87,6 +91,16 @@
 	    -- 3.修改表-删除字段
 	    -- alter table 表名 drop 列名;
 	    alter table students drop high;
+
+	    -- 3.1 修改表-删除外键
+	    -- alter table 表名 drop foreign key 外键名；
+	    alter table students drop foreign key xxx;
+
+	    	-- 获取外键名称
+	    	-- 需要先获取外键约束名称,该名称系统会自动生成,可以通过查看表创建语句来获取名称
+	    	show create table students;  #会显示CONSTRAINT `students_ibfk_1` FOREIGN KEY (`cls_id`) REFERENCES `classes`...，则students_ibfk_1是外键名称
+	    	
+
 
     -- 5.删除表
     -- drop table 表名;
@@ -112,7 +126,7 @@
 	    | cls_id | int(10) unsigned                    | YES  |     | NULL       |                |
 	    | birth  | date                                | YES  |     | 2000-01-01 |                |
 	    +--------+-------------------------------------+------+-----+------------+----------------+
-		    -- 向students表插入 一个学生信息
+		    -- 向students表插入 一个学生信息（一行一行数据插入，用values）
 		    insert into students values(0, "小李飞刀", 20, "女", 1, "1990-01-01");
 		    insert into students values(null, "小李飞刀", 20, "女", 1, "1990-01-01");
 		    insert into students values(default, "小李飞刀", 20, "女", 1, "1990-01-01");
@@ -120,13 +134,17 @@
 		    -- 枚举中 的 下标从1 开始 1---“男” 2--->"女"....
 	        insert into students values(default, "小李飞刀", 20, 1, 1, "1990-02-01");	
 
-	    -- 2.部分插入
+	    -- 2.部分插入（一行一行数据插入，用values）
         -- insert into 表名(列1,...) values(值1,...)
         insert into students (name, gender) values ("小乔", 2);
 
-    	-- 3.多行插入
+    	-- 3.多行插入（一行一行数据插入，用values）
     	insert into students (name, gender) values ("大乔", 2),("貂蝉", 2);
         insert into students values(default, "西施", 20, "女", 1, "1990-01-01"), (default, "王昭君", 20, "女", 1, "1990-01-01");
+
+        -- 4.列插入（一列一列数据插入，不用values）
+        insert into goods_cates1(name) (select cate_name from goods group by cate_name);  #一列列插入
+        insert into goods_cates1(name,price) (select cate_name,price from goods);  #一列列插入
 
     -- 2.修改
      -- update 表名 set 列1=值1,列2=值2... where 条件;

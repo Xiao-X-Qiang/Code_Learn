@@ -54,9 +54,12 @@
 
 	-- 1.比较运算符
 	-- > >= < <= = !=
-	select * from students where age>18;
-	select * from students where age<=18;
-	select name,gender from students where age!=18;
+		select * from students where age>18;
+		select * from students where age<=18;
+		select name,gender from students where age!=18;
+
+		-- 查找班级年龄最大,身高最高的学生
+		select * from students where (height,age) = (select max(height),max(age) from students);
 
 	-- 2.逻辑运算符
 	-- and or not
@@ -172,7 +175,7 @@
 	select round(avg(age),2) from students where gender=1;
 
 -- 分组
-	 -- 1.group by 字段 #相当于将原始数据表按照字段分别分组,每组一行，随后的操作对象是分组后的数据(注意分组组间的”主键“,group by 字段)
+	 -- 1.group by 字段 #相当于将原始数据表按照字段分别分组,随后的操作对象是分组后的数据(注意分组组间的”主键“,group by 字段)
 	 -- 通常，分组和聚合配合着使用方才有意义
 		 -- 计算每种性别中的人数
 		 select count(*) from students group by gender;
@@ -193,6 +196,25 @@
 
 		 -- 查询每种性别中的人数多于2个的信息
 		 select gender,group_concat(name) from students group by gender having count(*)>2;
+
+
+	-- 分组后的表可以看作以下形式
+	------------------------------------------------
+		| gende | id | name | height | is_del | cls_id |
+		|       | 1  | 小明 | 188.00 |  0    |   1     |
+		|	男	| 3  | 张三 | 175.00 |  0    |   1     |
+		|       | 2  | 周杰 | 170.00 |  0    |   2     |
+
+
+		| gende | id | name | height | is_del | cls_id |
+		|       | 1  | 静香 | 180.00 |  0    |   2     |
+		|	女	| 3  | 小花 | 176.00 |  0    |   1     |
+		|       | 2  | 金星 | 175.00 |  0    |   2     |
+
+	-- 错误的，select name,count(*) from students group by gender;  #对于分组后的4组数据中，每组中select后的字段值必须为一行(因为每组的gender只有一行)，最终会有4行)，否则会报错
+	-- 计算不同性别的平均身高
+	select gender,avg(height) from students group by gender;
+
 
 -- 分页
 	-- 1.limit count
@@ -259,6 +281,10 @@
 	-- 列子查询，返回的结果是一列(一列多行)
 	-- 在课程表中查询被学生选择的课程名
 	select name from classes where id in (select cls_id from students);
+
+	-- 表子查询，返回的结果是多行多行
+	-- 对于表子查询的结果可以将其as后作表看待，其实行、列子查询也可以如此操作
+	select * from goods inner join (select cate_name,max(price) as max_price from goods group by cate_name) as goods_new on goods.cate_name=goods_new.cate_name and goods.price=goods_new.max_price;
 
 
 -- 数据库的设计
