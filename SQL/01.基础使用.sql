@@ -156,11 +156,11 @@
         select id as 序号, gender as 性别, name as 姓名 from students;
 	
 
-    -- 4.删除
+    -- 4.删除  删除记录
         -- 1.物理删除
         -- delete from 表名 where 条件
         delete from students; -- 整个数据表中的所有数据全部删除
-        delete from students where name="小李飞刀";
+        delete from students where name="小李飞刀";  #删除记录
 
         -- 2.逻辑删除  推荐
         -- 用一个字段来表示 这条信息是否已经不能再使用了

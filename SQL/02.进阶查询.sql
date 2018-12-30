@@ -172,11 +172,11 @@
 	select round(avg(age),2) from students where gender=1;
 
 -- 分组
-	 -- 1.group by 字段 #相当于将原始数据表按照字段分别分组，随后的操作对象是分组后的数据(注意分组后的”主键“)
+	 -- 1.group by 字段 #相当于将原始数据表按照字段分别分组,每组一行，随后的操作对象是分组后的数据(注意分组组间的”主键“,group by 字段)
 	 -- 通常，分组和聚合配合着使用方才有意义
 		 -- 计算每种性别中的人数
 		 select count(*) from students group by gender;
-		 -- 错误的，select name,count(*) from students group by gender;  #对于分组后的4组数据中，每组中的name是有歧义的，会报错
+		 -- 错误的，select name,count(*) from students group by gender;  #对于分组后的4组数据中，每组中的name是有歧义的(count*是一个数值，而name却有多个)，会报错
 
 		 -- 计算男性的人数
 		 select count(*) from students where gender=1 group by gender;
@@ -248,13 +248,18 @@
 -- 子查询
 	-- 当查询语句中有未知变量时，需要进一步查询获知该值，这就是子查询
 
-	-- 标量子查询
+	-- 标量子查询，子查询返回的结果是一个数据(一行一列)
 	-- 查询最高的男生信息
 	select * from students where height = (select max(height) from students);
 
-	-- 死缓子查询
-	-- 查询有相应班级信息的学生信息
-	select	* from students where cls_id in (select id from classes);
+	-- 行子查询，返回的结果是一行(一行多列)
+	-- 查找班级年龄最大,身高最高的学生
+	select * from students where (height,age) = (select max(height),max(age) from students);
+
+	-- 列子查询，返回的结果是一列(一列多行)
+	-- 在课程表中查询被学生选择的课程名
+	select name from classes where id in (select cls_id from students);
+
 
 -- 数据库的设计
 	-- 范式

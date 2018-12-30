@@ -1,20 +1,15 @@
 
 -- 小结
--- 查询的完整格式表现为：
-	select distinct *
-	from 表名
-	where ....
-	group by ... having ...
-	order by ...
-	limit start,count
+-- 查询的完整格式及其执行顺序为：
 
--- 执行顺序为：
-	from 表名
-	where ....
-	group by ...
-	select distinct *
-	having ...
-	order by ...
-	limit start,count
-
--- 实际使用中，只是语句中某些部分的组合，而不是全部hello
+select ... from ... join ... on ... where ...  group by ... having ... order by ...  limit .... 
+		   -----------------
+		           1          -------
+		                         2   ----------
+		                                 3     -------------
+		                                      		4	   -----------
+----------														5
+	6																   -------------
+																	   		 7		 -----------
+																	   		 			  8
+-- 实际使用中，只是语句中某些部分的组合，而不是全部
