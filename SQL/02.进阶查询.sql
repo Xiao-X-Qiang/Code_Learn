@@ -282,8 +282,8 @@
 	-- 在课程表中查询被学生选择的课程名
 	select name from classes where id in (select cls_id from students);
 
-	-- 表子查询，返回的结果是多行多行
-	-- 对于表子查询的结果可以将其as后作表看待，其实行、列子查询也可以如此操作
+	-- 表子查询，返回的结果是多行多列
+	-- 对于子查询的结果可以将其as后作表看待，其实行、列子查询也可以如此操作
 	select * from goods inner join (select cate_name,max(price) as max_price from goods group by cate_name) as goods_new on goods.cate_name=goods_new.cate_name and goods.price=goods_new.max_price;
 
 

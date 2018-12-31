@@ -77,7 +77,8 @@
 	    alter table students add birthday datetime;
 
 	    -- 1.1 修改表-添加外键
-	    -- alter table 表1 add foreign key (字段) references 表2(字段);
+	    -- 表A的外键字段1，字段1与字段2数据类型必须一致，同时字段1的内容必须是字段2的内容-数据一致
+	    -- alter table 表1 add foreign key (字段1) references 表2(字段2);
 	    alter table students add foreign key (cls_id) references classes(id);
 	 
 	    -- 2.1  修改表-修改字段：不重命名版
@@ -98,7 +99,8 @@
 
 	    	-- 获取外键名称
 	    	-- 需要先获取外键约束名称,该名称系统会自动生成,可以通过查看表创建语句来获取名称
-	    	show create table students;  #会显示CONSTRAINT `students_ibfk_1` FOREIGN KEY (`cls_id`) REFERENCES `classes`...，则students_ibfk_1是外键名称
+	    	-- 会显示CONSTRAINT `students_ibfk_1` FOREIGN KEY (`cls_id`) REFERENCES `classes`...，则students_ibfk_1是外键名称
+	    	show create table students;  
 	    	
 
 
