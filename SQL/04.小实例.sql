@@ -57,7 +57,13 @@
 		on goods.cate_name=goods_new_info.cate_name and goods.price=goods_new_info.max_price;
 
 
-
+create table customers(
+id int unsigned auto_increment not null primary key,
+name varchar(40) not null,
+address varchar(100),
+tel varchar(40),
+passwd varchar(100)
+);
 
 
 
