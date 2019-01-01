@@ -65,7 +65,7 @@
 		-- 注意：
 		-- 在MySQL客户端中，默认开启事务，只是单句成事务，可以显示开启；在python中，默认开启事务，因为需要在修改数据库数据时，显示commit提交事务；
 		-- 对于隔离性而言，可以理解为：某用户A操作某数据时，对其进行了加锁操作，在没有commit或rollback解锁前，其它用户B对同一数据的修改会被阻塞；
-		-- 用户对数据的修改，在commit前只对自己可见；
+		-- 用户对数据的修改，在commit前只对自己可见-隔离性；
 		-- 修改数据的命令会自动的触发事务，包括insert、update、delete
 
 	-- 2.开启事务
@@ -166,6 +166,98 @@
 		-- 5.1 修改mysqld.cnf配置文件，注释绑定本地127.0.0.1
 		-- 重启mysql
 		mysql -u用户 -p密码 -P端口 -h远程IP地址
+
+
+-- 主从同步
+	-- 主从同步使得数据可以从一个数据库服务器复制到其他服务器上，在复制数据时，一个服务器充当主服务器（master），其余的服务器充当从服务器（slave），如此可以
+	-- 读写分开，提升效率：在主服务器上执行写入和更新，在从服务器上向外提供读功能，可以动态地调整从服务器的数量，从而调整整个数据库的性能
+	-- 数据备份，保证案例：从服务器上备份而不破坏主服务器相应数据
+
+	-- Mysql服务器之间的主从同步是基于二进制日志机制，主服务器使用二进制日志来记录数据库的变动情况，从服务器通过读取和执行该日志文件来保持和主服务器的数据一致
+	-- 从服务器可以通过配置文件同步部分主服务器
+
+	-- 主服务器：
+		-- 开启二进制日志
+		-- 配置唯一的server-id
+		-- 获得master二进制日志文件名及位置
+		-- 创建一个用于slave和master通信的从服务器账号
+
+	-- 从服务器
+		-- 配置唯一的server-id
+		-- 使用master分配的用户账号读取master二进制日志
+		-- 启用slave服务
+
+	-- 具体实现如下：
+	-- 主服务器：192.168.95.133
+	-- 从服务器：192.168.95.137
+
+	-- 1.修改主服务器mysql配置文件
+	-- 找到主数据库的配置文件my.cnf(或者my.ini)，我的在/etc/mysql/my.cnf,在[mysqld]部分插入如下两行：
+	[mysqld]
+	log-bin=mysql-bin #开启二进制日志
+	server-id=1 #设置server-id
+
+	-- 2.重启mysql,创建用于同步的从服务器账号
+	-- 2.1进入mysql会话，创建账号并授权：用户:repl 密码:slavepass
+	mysql> CREATE USER 'repl'@'192.168.95.137' IDENTIFIED BY 'slavepass';#创建用户
+	mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'192.168.95.137';#分配权限
+	mysql>flush privileges;   #刷新权限
+
+	-- 3.查看master状态，记录二进制文件名(mysql-bin.000003)和位置(527)：
+	mysql> show master status;
+	+------------------+----------+--------------+------------------+-------------------+
+	| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
+	+------------------+----------+--------------+------------------+-------------------+
+	| mysql-bin.000003 |      527 |              |                  |                   |
+	+------------------+----------+--------------+------------------+-------------------+
+	1 row in set (0.00 sec)
+
+	-- 4.修改从服务器mysql配置文件
+	[mysqld]
+	server-id=2 #设置server-id，必须唯一，区别于主服务器server-id
+
+	-- 5.重启mysql，打开mysql会话，执行同步SQL语句(需要主服务器主机名，登陆凭据，二进制文件的名称和位置)：
+	mysql> CHANGE MASTER TO
+    ->     MASTER_HOST='192.168.95.133',
+    ->     MASTER_USER='repl',
+    ->     MASTER_PASSWORD='slavepass',
+    ->     MASTER_LOG_FILE='mysql-bin.000003',
+    ->     MASTER_LOG_POS=527;
+
+    -- 6.启动slave同步进程
+    mysql>start slave;
+
+    -- 7.查看slave状态
+    -- 当看到Slave_IO_Running和Slave_SQL_Running,都Yes时，表示同步成功
+   	mysql>show slave status \G
+   	*************************** 1. row ***************************
+               Slave_IO_State: Waiting for master to send event
+                  Master_Host: 192.168.95.133
+                  Master_User: repl
+                  Master_Port: 3306
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.000003
+          Read_Master_Log_Pos: 527
+               Relay_Log_File: mysqld-relay-bin.000002
+                Relay_Log_Pos: 457
+        Relay_Master_Log_File: mysql-bin.000003
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+              Replicate_Do_DB: 
+          Replicate_Ignore_DB: 
+
+    -- 注意：1.master开启二进制日志后默认记录所有库所有表的操作，可通过配置来指定只记录指定的数据库甚至指定的表的操作，具体在mysql配置文件的[mysqld]可添加修改如下选项：
+    # 不同步哪些数据库  
+	binlog-ignore-db = mysql  
+	binlog-ignore-db = test  
+	binlog-ignore-db = information_schema  
+	  
+	# 只同步哪些数据库，除此之外，其他不同步  
+	binlog-do-db = game  
+	
+	-- 2.当出现Slave_IO_Running: NO错误时，如果是克隆关系的多台主机时，由于mysql中的uuid是唯一标识的，而克隆的uuid是相同的，只需修改一下uuid使其各不相同后重启即可
+	-- 置在：auto.cnf中修改uuid
+	auto.cnf文件一般在  ./var/lib/mysql/auto.cnf , 如果没有那就用linux 查询命令找：find -name auto.cnf
 
 
 

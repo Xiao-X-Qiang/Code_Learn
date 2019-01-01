@@ -38,6 +38,31 @@
     -- show crate database ....
     show create database python04;
 
+    -- 6.备份单个数据库及恢复数据库
+    	-- 备份数据库
+	    -- 命令行下：mysqldump -uroot -p 数据库1名>xxx.sql
+	    -- 将数据库中的表结构及数据导出至xxx.sql文件中
+	    mysqldump -uroot -p jing_dong >jd.sql
+
+	    -- 恢复数据库
+	    -- mysql下新建数据库2,然后命令行模式下导入数据库中的表结构及其数据
+	    mysql -uroot -p jing_dong_back <jd.sql
+
+	-- 备份所有的数据库及恢复数据库 推荐
+		-- 备份所有数据库
+		-- 命令行下：
+		mysqldump -uroot -p --all-databases --lock-all-tables > ~/master_db.sql
+			-- -u:用户名
+			-- -p:密码
+			-- --all-databases:导出所有数据库
+			-- --lock-all-tables:执行操作时锁住所有表，防止操作时有数据修改
+			-- ~/master_db.sql：导出数据库的文件位置
+
+		-- 恢复所有的数据库
+		-- 命令行下：
+		mysql –uroot –p < master_db.sql
+
+
 
 -- 数据表结构的操作
 
