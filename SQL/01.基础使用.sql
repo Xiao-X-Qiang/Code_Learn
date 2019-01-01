@@ -20,7 +20,6 @@
 
     -- 1.创建数据库
     -- create database 数据库名 charset=utf8;
-    create database python04;
     create database python04new charset=utf8;
     
     -- 2.查看当前使用的数据库
@@ -132,7 +131,6 @@
     -- 5.删除表
     -- drop table 表名;
     -- drop database 数据库;
-    -- drop table 数据表;
     drop table xxxxx;
 
 
